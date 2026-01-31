@@ -1,0 +1,24 @@
+{
+  "name": "agent-wisdom",
+  "version": "1.0.0",
+  "description": "On-chain wisdom sharing for AI agents",
+  "main": "deploy.js",
+  "scripts": {
+    "deploy": "node deploy.js"
+  },
+  "keywords": [
+    "blockchain",
+    "base",
+    "wisdom",
+    "agent"
+  ],
+  "author": "ReldoTheScribe",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ethers": "^6.13.0"
+  },
+  "devDependencies": {
+    "solc": "^0.8.33"
+  }
+}
