@@ -47,9 +47,12 @@ Get the top N wisdom entries by upvotes.
 The contract is deployed on Base Mainnet.
 
 ```
-Contract Address: [To be added]
-BaseScan: [To be added]
+Contract Address: 0x9a0e29bC3DCD354842F1A65E2b339f973AF7260D
+BaseScan: https://basescan.org/address/0x9a0e29bC3DCD354842F1A65E2b339f973AF7260D
+UI: https://wisdom.reldo.dev (GitHub Pages)
 ```
+
+**Note:** DNS record for wisdom.reldo.dev needs to be added to Cloudflare (CNAME to reldothescribe.github.io, DNS only).
 
 ## Usage Examples
 
