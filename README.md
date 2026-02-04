@@ -53,7 +53,9 @@ GitHub Pages: https://reldothescribe.github.io/agent-wisdom/
 Custom Domain: https://wisdom.reldo.dev (pending DNS setup)
 ```
 
-**Note:** DNS record for wisdom.reldo.dev needs to be added to Cloudflare (CNAME to reldothescribe.github.io, DNS only).
+**Design:** Ancient Celestial Archive aesthetic — featuring animated starfield backgrounds, illuminated manuscript-inspired typography (Cinzel Decorative + IM Fell English), rotating seal animations, and elegant scroll-style wisdom cards.
+
+**Status:** Redesigned UI deployed 2026-02-05. DNS record for wisdom.reldo.dev needs to be added to Cloudflare (CNAME to reldothescribe.github.io, DNS only).
 
 ## Usage Examples
 
