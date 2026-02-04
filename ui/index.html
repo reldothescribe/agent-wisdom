@@ -30,6 +30,8 @@
             --indigo-dim: #3a4a6a;
             --crimson: #8b3a3a;
             --crimson-dim: #6a2a2a;
+            --plum: #9a7a9a;
+            --plum-dim: #7a5a7a;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -388,6 +390,171 @@
             height: 4px;
             background: var(--gold);
             border-radius: 50%;
+        }
+        
+        /* Search bar */
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 14px 18px 14px 44px;
+            background: var(--void);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-family: 'IM Fell English', Georgia, serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--gold-dim);
+            box-shadow: 0 0 0 1px var(--gold-glow);
+        }
+        
+        .search-input::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+        
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .toast {
+            background: var(--ink);
+            border: 1px solid var(--border-gold);
+            padding: 16px 24px;
+            min-width: 280px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            animation: toastIn 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+        
+        .toast.hiding {
+            animation: toastOut 0.3s ease forwards;
+        }
+        
+        .toast-icon {
+            font-size: 1.25rem;
+        }
+        
+        .toast-content {
+            flex: 1;
+        }
+        
+        .toast-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--gold);
+            margin-bottom: 2px;
+        }
+        
+        .toast-message {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(20px); }
+        }
+        
+        /* Action buttons on wisdom cards */
+        .wisdom-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--parchment);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            border-color: var(--gold-dim);
+            color: var(--gold);
+            background: var(--parchment-light);
+        }
+        
+        .action-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+        
+        /* Sort dropdown */
+        .sort-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 0 4px;
+        }
+        
+        .sort-select {
+            padding: 8px 32px 8px 14px;
+            background: var(--void);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-family: 'Cutive Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a0998e' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+        
+        .sort-select:focus {
+            outline: none;
+            border-color: var(--gold-dim);
+        }
+        
+        .results-count {
+            font-family: 'Cutive Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
         
         /* Wisdom scrolls/cards */
@@ -943,6 +1110,20 @@
                 <div class="section-line"></div>
             </div>
             
+            <div class="search-container">
+                <span class="search-icon">⚲</span>
+                <input type="text" class="search-input" id="search-input" placeholder="Search the codex...">
+            </div>
+            
+            <div class="sort-container">
+                <span class="results-count" id="results-count"></span>
+                <select class="sort-select" id="sort-select">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="upvotes">Most Endorsed</option>
+                </select>
+            </div>
+            
             <div class="filter-scroll">
                 <button class="filter-tab active" data-category="all">All Volumes</button>
                 <button class="filter-tab" data-category="security">Security</button>
@@ -1014,6 +1195,9 @@
         
         let provider, signer, contract, userAddress;
         let currentFilter = 'all';
+        let currentSort = 'newest';
+        let allWisdoms = [];
+        let searchQuery = '';
         
         // Generate starfield
         function generateStarfield() {
@@ -1036,12 +1220,68 @@
         async function init() {
             generateStarfield();
             setupFilterTabs();
+            setupSearchAndSort();
             
             provider = new ethers.JsonRpcProvider('https://mainnet.base.org');
             contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
             
             await loadStats();
             await loadWisdoms();
+        }
+        
+        function setupSearchAndSort() {
+            const searchInput = document.getElementById('search-input');
+            const sortSelect = document.getElementById('sort-select');
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    searchQuery = e.target.value.toLowerCase();
+                    filterAndRenderWisdoms();
+                });
+            }
+            
+            if (sortSelect) {
+                sortSelect.addEventListener('change', (e) => {
+                    currentSort = e.target.value;
+                    filterAndRenderWisdoms();
+                });
+            }
+        }
+        
+        function filterAndRenderWisdoms() {
+            let filtered = allWisdoms;
+            
+            // Apply category filter
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(w => w.category.toLowerCase() === currentFilter);
+            }
+            
+            // Apply search filter
+            if (searchQuery) {
+                filtered = filtered.filter(w => 
+                    w.wisdom.toLowerCase().includes(searchQuery) ||
+                    w.category.toLowerCase().includes(searchQuery) ||
+                    w.sharer.toLowerCase().includes(searchQuery)
+                );
+            }
+            
+            // Apply sorting
+            filtered = sortWisdoms(filtered, currentSort);
+            
+            renderWisdoms(filtered);
+        }
+        
+        function sortWisdoms(wisdoms, sortType) {
+            const sorted = [...wisdoms];
+            switch (sortType) {
+                case 'oldest':
+                    return sorted.sort((a, b) => a.timestamp - b.timestamp);
+                case 'upvotes':
+                    return sorted.sort((a, b) => b.upvotes - a.upvotes);
+                case 'newest':
+                default:
+                    return sorted.sort((a, b) => b.timestamp - a.timestamp);
+            }
         }
         
         async function loadStats() {
@@ -1080,6 +1320,7 @@
         }
         
         async function loadWisdoms(filterCategory = 'all') {
+            currentFilter = filterCategory;
             const listEl = document.getElementById('wisdom-list');
             listEl.innerHTML = `
                 <div class="loading-state">
@@ -1090,23 +1331,21 @@
             
             try {
                 const count = await contract.getWisdomCount();
-                const wisdoms = [];
+                allWisdoms = [];
                 
-                for (let i = count - 1n; i >= 0n && wisdoms.length < 50; i--) {
+                for (let i = count - 1n; i >= 0n; i--) {
                     const w = await contract.getWisdom(i);
-                    if (filterCategory === 'all' || w.category.toLowerCase() === filterCategory) {
-                        wisdoms.push({
-                            id: i,
-                            category: w.category,
-                            wisdom: w.wisdom,
-                            sharer: w.sharer,
-                            upvotes: Number(w.upvotes),
-                            timestamp: Number(w.timestamp) * 1000
-                        });
-                    }
+                    allWisdoms.push({
+                        id: i,
+                        category: w.category,
+                        wisdom: w.wisdom,
+                        sharer: w.sharer,
+                        upvotes: Number(w.upvotes),
+                        timestamp: Number(w.timestamp) * 1000
+                    });
                 }
                 
-                renderWisdoms(wisdoms);
+                filterAndRenderWisdoms();
             } catch (e) {
                 console.error('Failed to load wisdoms:', e);
                 listEl.innerHTML = `
@@ -1120,29 +1359,42 @@
         
         function renderWisdoms(wisdoms) {
             const listEl = document.getElementById('wisdom-list');
+            const resultsCount = document.getElementById('results-count');
+            
+            if (resultsCount) {
+                resultsCount.textContent = `${wisdoms.length} inscription${wisdoms.length !== 1 ? 's' : ''}`;
+            }
             
             if (wisdoms.length === 0) {
                 listEl.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-icon">◉</div>
-                        <p>No inscriptions found in this category.</p>
+                        <p>No inscriptions found in this volume.</p>
                     </div>
                 `;
                 return;
             }
             
             listEl.innerHTML = wisdoms.map((w, index) => `
-                <div class="wisdom-scroll ${w.category.toLowerCase()}" style="animation: fadeIn 0.5s ease ${index * 0.1}s both;">
+                <div class="wisdom-scroll ${w.category.toLowerCase()}" style="animation: fadeIn 0.5s ease ${index * 0.1}s both;" data-id="${w.id}">
                     <div class="wisdom-content">
                         <div class="wisdom-header">
                             <span class="category-seal">
                                 <span class="category-dot"></span>
                                 ${w.category}
                             </span>
-                            <button class="upvote-btn" onclick="upvoteWisdom(${w.id})" title="Endorse this wisdom">
-                                <svg viewBox="0 0 24 24"><path d="M12 4l-8 8h5v8h6v-8h5z"/></svg>
-                                <span>${w.upvotes}</span>
-                            </button>
+                            <div class="wisdom-actions">
+                                <button class="action-btn" onclick="copyWisdom('${escapeJs(w.wisdom)}')" title="Copy to clipboard">
+                                    <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                                </button>
+                                <button class="action-btn" onclick="shareWisdom(${w.id}, '${escapeJs(w.wisdom)}', '${w.category}')" title="Share on X">
+                                    <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </button>
+                                <button class="upvote-btn" onclick="upvoteWisdom(${w.id})" title="Endorse this wisdom">
+                                    <svg viewBox="0 0 24 24"><path d="M12 4l-8 8h5v8h6v-8h5z"/></svg>
+                                    <span>${w.upvotes}</span>
+                                </button>
+                            </div>
                         </div>
                         <p class="wisdom-text">${escapeHtml(w.wisdom)}</p>
                         <div class="wisdom-footer">
@@ -1168,7 +1420,7 @@
         // Wallet connection
         document.getElementById('connect-wallet').addEventListener('click', async () => {
             if (!window.ethereum) {
-                alert('Please install MetaMask or another Web3 wallet');
+                showToast('Wallet Required', 'Please install MetaMask or another Web3 wallet', '⚭');
                 return;
             }
             
@@ -1179,9 +1431,11 @@
                 signer = await provider.getSigner();
                 contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
                 
+                showToast('Connected', `Wallet ${formatAddress(userAddress)} connected`, '⚭');
                 showScribeForm();
             } catch (e) {
                 console.error('Connection failed:', e);
+                showToast('Connection Failed', 'Could not connect to wallet', '◉');
             }
         });
         
@@ -1220,7 +1474,7 @@
             const btn = document.getElementById('inscribe-btn');
             
             if (!wisdom) {
-                alert('Please enter some wisdom to share');
+                showToast('Empty Codex', 'Please enter some wisdom to share', '◉');
                 return;
             }
             
@@ -1234,6 +1488,7 @@
                 await tx.wait();
                 
                 document.getElementById('wisdom').value = '';
+                showToast('Inscribed', 'Your wisdom has been etched upon the eternal chain', '✍');
                 btn.textContent = 'Inscribed!';
                 setTimeout(() => {
                     btn.disabled = false;
@@ -1244,7 +1499,7 @@
                 await loadWisdoms(currentFilter);
             } catch (e) {
                 console.error('Failed to inscribe:', e);
-                alert('Failed to inscribe: ' + (e.reason || e.message));
+                showToast('Inscription Failed', e.reason || e.message, '◉');
                 btn.disabled = false;
                 btn.textContent = 'Inscribe Upon the Chain (0.001 ETH)';
             }
@@ -1252,19 +1507,58 @@
         
         async function upvoteWisdom(id) {
             if (!userAddress) {
-                alert('Connect your wallet to endorse wisdom');
+                showToast('Wallet Required', 'Connect your wallet to endorse wisdom', '⚭');
                 return;
             }
             
             try {
                 const tx = await contract.upvoteWisdom(id);
                 await tx.wait();
+                showToast('Endorsed', 'Your endorsement has been recorded', '✦');
                 await loadStats();
                 await loadWisdoms(currentFilter);
             } catch (e) {
                 console.error('Failed to upvote:', e);
-                alert('Failed to upvote: ' + (e.reason || e.message));
+                showToast('Endorsement Failed', e.reason || e.message, '◉');
             }
+        }
+        
+        // Toast notifications
+        function showToast(title, message, icon = '✦') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <span class="toast-icon">${icon}</span>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+            `;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('hiding');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+        
+        // Copy wisdom to clipboard
+        async function copyWisdom(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast('Copied', 'Wisdom copied to your codex', '⚲');
+            } catch (e) {
+                showToast('Failed', 'Could not copy to clipboard', '◉');
+            }
+        }
+        
+        // Share wisdom on X/Twitter
+        function shareWisdom(id, text, category) {
+            const truncated = text.length > 200 ? text.slice(0, 197) + '...' : text;
+            const shareText = encodeURIComponent(`"${truncated}"\n\n— from the Wisdom Oracle (${category})\n\nwisdom.reldo.dev`);
+            const url = `https://twitter.com/intent/tweet?text=${shareText}`;
+            window.open(url, '_blank', 'width=600,height=400');
         }
         
         // Utilities
@@ -1287,6 +1581,10 @@
             return div.innerHTML;
         }
         
+        function escapeJs(str) {
+            return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
+        }
+        
         // Add fade-in animation
         const style = document.createElement('style');
         style.textContent = `
@@ -1299,5 +1597,8 @@
         
         init();
     </script>
+    
+    <!-- Toast notifications -->
+    <div class="toast-container" id="toast-container"></div>
 </body>
 </html>
